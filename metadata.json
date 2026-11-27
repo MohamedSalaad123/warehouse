@@ -1,6 +1,0 @@
-{
-  "name": "Khayre Warehouse System",
-  "description": "Enterprise multi-warehouse inventory management, stock tracking, transfers, valuation, and role-based operations platform.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
