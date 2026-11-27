@@ -68,11 +68,16 @@ export async function apiRequest<T = any>(
   }
 
   try {
-    const res = await fetch(url, {
-      method,
-      headers,
-      body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
-    });
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || '';
+
+const apiUrl = `${API_BASE_URL}${url}`;
+
+const res = await fetch(apiUrl, {
+  method,
+  headers,
+  body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+});
 
     if (!res.ok) {
       let errMsg = `Request failed (${res.status})`;
