@@ -43,15 +43,46 @@ async function startServer() {
   );
 
   // Strict origin-checked CORS (never wildcard '*' on authenticated endpoints)
-  const allowedOrigins = new Set(
-    [
-      process.env.CLIENT_URL,
-      process.env.APP_URL,
-      'http://localhost:3000',
-      'http://127.0.0.1:3000',
-    ].filter((v): v is string => Boolean(v && v.trim()))
-  );
+// Allowed frontend origins
+const allowedOrigins = new Set(
+  [
+    process.env.CLIENT_URL,
+    process.env.APP_URL,
 
+    // Cloudflare Workers frontend
+    'https://warehouse.momedyare66.workers.dev',
+
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+  ]
+    .filter(Boolean)
+    .map((url) => url!.trim().replace(/\/+$/, ''))
+);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      const normalizedOrigin = origin.trim().replace(/\/+$/, '');
+
+      if (
+        allowedOrigins.has(normalizedOrigin) ||
+        normalizedOrigin.endsWith('.onrender.com') ||
+        normalizedOrigin.endsWith('.run.app')
+      ) {
+        return callback(null, true);
+      }
+
+      console.error('CORS blocked origin:', origin);
+
+      return callback(new Error('Origin not allowed by CORS'));
+    },
+    credentials: true,
+  })
+);
   app.use(
     cors({
       origin(origin, callback) {
